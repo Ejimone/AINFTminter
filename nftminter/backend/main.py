@@ -225,9 +225,10 @@ async def generate_nft(request: GenerateNFTRequest):
 @app.post("/api/v1/generate-batch", response_model=dict)
 async def generate_batch(request: BatchGenerateRequest, background_tasks: BackgroundTasks):
     """
-    Generate multiple NFTs from a list of prompts.
+    Generate multiple NFTs from a list of prompts and upload to IPFS.
     
     This is useful for creating NFT collections. Limited to 10 prompts per request.
+    Each generated image is uploaded to IPFS for decentralized storage.
     """
     if not nft_generator:
         raise HTTPException(
@@ -235,11 +236,50 @@ async def generate_batch(request: BatchGenerateRequest, background_tasks: Backgr
             detail="NFT Generator not initialized. Please configure GOOGLE_API_KEY."
         )
     
+    if not ipfs_uploader:
+        raise HTTPException(
+            status_code=503,
+            detail="IPFS Uploader not initialized. Please configure PINATA_JWT."
+        )
+    
     try:
+        print(f"\n🎨 Starting batch generation for {len(request.prompts)} prompts...")
+        
+        # Generate all images locally first
         results = nft_generator.generate_batch(request.prompts)
         
-        successful = [r for r in results if r.get("success")]
-        failed = [r for r in results if not r.get("success")]
+        # Process each successful result to upload to IPFS
+        for i, result in enumerate(results):
+            if result.get("success"):
+                try:
+                    print(f"📤 Uploading image {i+1}/{len(results)} to IPFS...")
+                    
+                    # Upload to IPFS
+                    ipfs_result = ipfs_uploader.upload_nft_complete(
+                        image_path=result["image_path"],
+                        metadata=result["metadata"]
+                    )
+                    
+                    # Add IPFS URIs to the result
+                    result["ipfs_uri"] = ipfs_result["image_ipfs_uri"]
+                    result["image_ipfs_uri"] = ipfs_result["image_ipfs_uri"]
+                    result["metadata_ipfs_uri"] = ipfs_result["metadata_ipfs_uri"]
+                    result["status"] = "success"  # Ensure status is set correctly
+                    
+                    print(f"✅ Image {i+1} uploaded: {ipfs_result['image_ipfs_uri']}")
+                    
+                except Exception as e:
+                    print(f"❌ Failed to upload image {i+1} to IPFS: {str(e)}")
+                    result["success"] = False
+                    result["status"] = "error"
+                    result["error"] = f"IPFS upload failed: {str(e)}"
+            else:
+                result["status"] = "error"  # Ensure failed generations have error status
+        
+        successful = [r for r in results if r.get("success") and r.get("status") == "success"]
+        failed = [r for r in results if not r.get("success") or r.get("status") == "error"]
+        
+        print(f"✅ Batch generation complete: {len(successful)} succeeded, {len(failed)} failed")
         
         return {
             "success": True,
