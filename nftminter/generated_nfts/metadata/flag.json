@@ -1,0 +1,16 @@
+{
+  "name": "AI Generated NFT - flag",
+  "description": "AI-generated artwork created from prompt: 'American Flag'",
+  "image": "generated_nfts/images/flag.png",
+  "prompt": "American Flag",
+  "attributes": [
+    {
+      "trait_type": "Generation Method",
+      "value": "Gemini 2.5 Flash Image"
+    },
+    {
+      "trait_type": "Created",
+      "value": "2025-10-17T13:38:17.205383"
+    }
+  ]
+}

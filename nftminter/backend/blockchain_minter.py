@@ -107,13 +107,21 @@ class BlockchainMinter:
             # Get the token ID from the Transfer event (emitted by ERC721)
             # Transfer event: Transfer(address indexed from, address indexed to, uint256 indexed tokenId)
             token_id = None
-            for event in tx.events.get('Transfer', []):
-                if event['to'] == recipient_address:
-                    token_id = event['tokenId']
-                    break
+            if 'Transfer' in tx.events:
+                # tx.events can be either a dict of lists or an EventDict
+                transfer_events = tx.events['Transfer']
+                # Handle both single event and list of events
+                if not isinstance(transfer_events, list):
+                    transfer_events = [transfer_events]
+                
+                for event in transfer_events:
+                    if event['to'] == recipient_address:
+                        token_id = event['tokenId']
+                        break
             
             if token_id is None:
                 # Fallback: get total supply (works if this is the latest mint)
+                print("   ⚠️  Could not find Transfer event, using totalSupply()")
                 token_id = minter.totalSupply()
             
             print(f"\n✅ NFT minted successfully!")

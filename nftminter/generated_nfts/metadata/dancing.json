@@ -1,0 +1,16 @@
+{
+  "name": "AI Generated NFT - dancing",
+  "description": "AI-generated artwork created from prompt: 'Dancing monkey on a script making money with a girrafe'",
+  "image": "generated_nfts/images/dancing.png",
+  "prompt": "Dancing monkey on a script making money with a girrafe",
+  "attributes": [
+    {
+      "trait_type": "Generation Method",
+      "value": "Gemini 2.5 Flash Image"
+    },
+    {
+      "trait_type": "Created",
+      "value": "2025-10-17T13:37:12.295883"
+    }
+  ]
+}
