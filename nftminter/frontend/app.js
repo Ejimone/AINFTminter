@@ -283,13 +283,22 @@ document.getElementById('singleNftForm').addEventListener('submit', async (e) =>
             throw new Error(error.detail || `HTTP error! status: ${response.status}`);
         }
         
-                const data = await response.json();
-                
-                // Show success result with NFT viewing capabilities
-                showNFTResult(data, false);
-                
-                // Reset form
-                document.getElementById('singleNftForm').reset();
+        const data = await response.json();
+        
+        // Mark all steps complete
+        updateStep(0, true);
+        updateStep(1, true);
+        updateStep(2, true);
+        
+        // Hide loading after a brief moment
+        setTimeout(() => {
+            hideLoading();
+            
+            // Show success result with NFT viewing capabilities
+            showNFTResult(data, false);
+            
+            // Reset form
+            document.getElementById('singleNftForm').reset();
         }, 500);    } catch (error) {
         console.error('Error generating NFT:', error);
         hideLoading();
