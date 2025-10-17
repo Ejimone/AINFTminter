@@ -5,4 +5,5 @@ python-multipart
 google-genai
 python-dotenv
 Pillow
-ipfshttpclient
+requests
+eth-brownie

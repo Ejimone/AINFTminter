@@ -15,6 +15,8 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from generateNft import NFTGenerator, generate_nft_from_prompt
+from ipfs_uploader import IPFSUploader
+from blockchain_minter import BlockchainMinter
 
 # Load environment variables from .env file
 env_path = Path(__file__).parent / '.env'
@@ -51,6 +53,26 @@ class HealthResponse(BaseModel):
     api_configured: bool
 
 
+class MintNFTRequest(BaseModel):
+    prompt: str = Field(..., description="Text prompt to generate NFT image", min_length=3)
+    name: str = Field(..., description="Name for the NFT")
+    description: Optional[str] = Field(None, description="Optional description")
+    recipient_address: Optional[str] = Field(None, description="Recipient address (defaults to minter)")
+    network: str = Field("sepolia", description="Blockchain network (sepolia, ganache-local)")
+
+
+class MintNFTResponse(BaseModel):
+    success: bool
+    message: str
+    token_id: Optional[int] = None
+    transaction_hash: Optional[str] = None
+    image_ipfs_uri: Optional[str] = None
+    metadata_ipfs_uri: Optional[str] = None
+    explorer_url: Optional[str] = None
+    contract_address: Optional[str] = None
+    error: Optional[str] = None
+
+
 # Initialize FastAPI app
 app = FastAPI(
     title="AI NFT Minter API",
@@ -76,6 +98,28 @@ except ValueError as e:
     print(f"⚠️  Warning: {e}")
     print("API will run but generation will fail without GOOGLE_API_KEY")
     nft_generator = None
+
+# Initialize IPFS Uploader (optional, will check on use)
+try:
+    ipfs_uploader = IPFSUploader()
+    print("✅ IPFS Uploader initialized (Pinata)")
+except ValueError as e:
+    print(f"⚠️  Warning: {e}")
+    print("IPFS uploads will fail without PINATA_JWT")
+    ipfs_uploader = None
+
+# Initialize Blockchain Minter (optional, will check on use)
+try:
+    contract_address = os.getenv("CONTRACT_ADDRESS")
+    if contract_address:
+        blockchain_minter = BlockchainMinter(contract_address=contract_address)
+        print(f"✅ Blockchain Minter initialized (Contract: {contract_address})")
+    else:
+        blockchain_minter = None
+        print("⚠️  Warning: CONTRACT_ADDRESS not set. Minting will fail without it.")
+except ValueError as e:
+    print(f"⚠️  Warning: {e}")
+    blockchain_minter = None
 
 
 @app.get("/", response_model=dict)
@@ -209,6 +253,131 @@ async def get_metadata(filename: str):
         raise HTTPException(status_code=404, detail="Metadata not found")
     
     return FileResponse(metadata_path)
+
+
+@app.post("/api/v1/mint-nft", response_model=MintNFTResponse)
+async def mint_nft_complete(request: MintNFTRequest):
+    """
+    Complete end-to-end NFT minting: Generate → Upload to IPFS → Mint on Blockchain.
+    
+    This endpoint:
+    1. Generates an AI image from the prompt
+    2. Uploads the image to IPFS
+    3. Creates and uploads metadata to IPFS
+    4. Mints the NFT on the blockchain
+    
+    Returns the minted token ID and transaction details.
+    """
+    # Check all services are initialized
+    if not nft_generator:
+        raise HTTPException(
+            status_code=503,
+            detail="NFT Generator not initialized. Please configure GOOGLE_API_KEY."
+        )
+    
+    if not ipfs_uploader:
+        raise HTTPException(
+            status_code=503,
+            detail="IPFS Uploader not initialized. Please configure PINATA_JWT."
+        )
+    
+    # Check if contract address is configured
+    contract_address = os.getenv("CONTRACT_ADDRESS")
+    if not contract_address:
+        raise HTTPException(
+            status_code=503,
+            detail="Blockchain Minter not initialized. Please configure CONTRACT_ADDRESS and PRIVATE_KEY."
+        )
+    
+    try:
+        print(f"\n🚀 Starting complete NFT minting process...")
+        print(f"📝 Prompt: {request.prompt}")
+        
+        # Step 1: Generate the AI image
+        print("\n[1/4] Generating AI image...")
+        generation_result = nft_generator.generate_image(
+            prompt=request.prompt,
+            output_filename=request.name.replace(" ", "_").lower() if request.name else None
+        )
+        
+        if not generation_result["success"]:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Image generation failed: {generation_result.get('error')}"
+            )
+        
+        # Update metadata with custom name/description
+        metadata = generation_result["metadata"]
+        metadata["name"] = request.name
+        if request.description:
+            metadata["description"] = request.description
+        
+        print(f"✅ Image generated: {generation_result['image_path']}")
+        
+        # Step 2: Upload to IPFS
+        print("\n[2/4] Uploading to IPFS...")
+        ipfs_result = ipfs_uploader.upload_nft_complete(
+            image_path=generation_result["image_path"],
+            metadata=metadata
+        )
+        
+        print(f"✅ Uploaded to IPFS:")
+        print(f"   Image: {ipfs_result['image_ipfs_uri']}")
+        print(f"   Metadata: {ipfs_result['metadata_ipfs_uri']}")
+        
+        # Step 3: Mint on blockchain
+        print("\n[3/4] Minting on blockchain...")
+        
+        # Set recipient address
+        recipient = request.recipient_address
+        if not recipient:
+            # Use minter's address as recipient if not specified
+            from brownie import accounts
+            recipient = accounts.add(os.getenv("PRIVATE_KEY")).address
+        
+        # Create blockchain minter for this request (supports different networks)
+        minter = BlockchainMinter(
+            contract_address=contract_address,
+            network=request.network
+        )
+        
+        mint_result = minter.mint_nft(
+            recipient_address=recipient,
+            token_uri=ipfs_result["metadata_ipfs_uri"]
+        )
+        
+        if not mint_result["success"]:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Blockchain minting failed: {mint_result.get('error')}"
+            )
+        
+        print(f"✅ Minted on blockchain:")
+        print(f"   Token ID: {mint_result['token_id']}")
+        print(f"   Transaction: {mint_result['transaction_hash']}")
+        
+        # Step 4: Return complete result
+        print("\n[4/4] Complete! NFT successfully minted! 🎉")
+        
+        return MintNFTResponse(
+            success=True,
+            message=f"NFT '{request.name}' minted successfully!",
+            token_id=mint_result["token_id"],
+            transaction_hash=mint_result["transaction_hash"],
+            image_ipfs_uri=ipfs_result["image_ipfs_uri"],
+            metadata_ipfs_uri=ipfs_result["metadata_ipfs_uri"],
+            explorer_url=mint_result.get("explorer_url"),
+            contract_address=mint_result["contract_address"]
+        )
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"\n❌ Error in complete minting process: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Minting process failed: {str(e)}"
+        )
 
 
 # For development/testing

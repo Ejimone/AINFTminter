@@ -1,0 +1,16 @@
+{
+  "name": "AI Generated NFT - funny_business_nft",
+  "description": "AI-generated artwork created from prompt: 'A dancing monkey making money with a giraffe'",
+  "image": "generated_nfts/images/funny_business_nft.png",
+  "prompt": "A dancing monkey making money with a giraffe",
+  "attributes": [
+    {
+      "trait_type": "Generation Method",
+      "value": "Gemini 2.5 Flash Image"
+    },
+    {
+      "trait_type": "Created",
+      "value": "2025-10-17T13:31:10.651904"
+    }
+  ]
+}
