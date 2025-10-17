@@ -854,7 +854,7 @@ async function mintExistingNFT(metadataUri, name) {
         description: "Minted from generated NFT",
         recipient_address: userAccount,
         network: "sepolia",
-        token_uri: metadataUri,  // Changed from metadata_uri to token_uri
+        token_uri: metadataUri, // Changed from metadata_uri to token_uri
       }),
     });
 
