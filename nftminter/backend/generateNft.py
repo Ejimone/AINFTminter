@@ -66,19 +66,23 @@ class NFTGenerator:
                 prompt_hash = hashlib.md5(prompt.encode()).hexdigest()[:8]
                 output_filename = f"nft_{timestamp}_{prompt_hash}"
             
+            # Enhance prompt to ensure image generation
+            enhanced_prompt = f"Create a detailed, high-quality digital artwork image of: {prompt}. Style: digital art, vibrant colors, professional NFT artwork."
+            
             # Prepare the content for Gemini
             contents = [
                 types.Content(
                     role="user",
                     parts=[
-                        types.Part.from_text(text=prompt),
+                        types.Part.from_text(text=enhanced_prompt),
                     ],
                 ),
             ]
             
             # Configure to generate images
             generate_content_config = types.GenerateContentConfig(
-                response_modalities=["IMAGE", "TEXT"],
+                response_modalities=["IMAGE"],  # Only request IMAGE, not TEXT
+                temperature=1.0,
             )
             
             # Generate the image
@@ -104,12 +108,14 @@ class NFTGenerator:
                     inline_data = chunk.candidates[0].content.parts[0].inline_data
                     image_data = inline_data.data
                     mime_type = inline_data.mime_type
+                    print("✅ Image data received from AI!")
                     break
                 elif chunk.text:
+                    # Skip text responses
                     print(f"💭 AI says: {chunk.text}")
             
             if not image_data:
-                raise Exception("No image data received from Gemini API")
+                raise Exception("No image data received from Gemini API. The prompt might be too vague or inappropriate. Try a more descriptive prompt like 'A golden Bitcoin coin floating in space with stars'.")
             
             # Determine file extension from mime type
             file_extension = mimetypes.guess_extension(mime_type) or ".png"

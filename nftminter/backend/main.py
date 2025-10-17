@@ -112,7 +112,7 @@ except ValueError as e:
 try:
     contract_address = os.getenv("CONTRACT_ADDRESS")
     if contract_address:
-        blockchain_minter = BlockchainMinter(contract_address=contract_address)
+        blockchain_minter = BlockchainMinter()
         print(f"✅ Blockchain Minter initialized (Contract: {contract_address})")
     else:
         blockchain_minter = None

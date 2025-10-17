@@ -1,0 +1,53 @@
+# Ignore build artifacts and local files
+
+**pycache**/
+_.py[cod]
+_$py.class
+_.so
+.Python
+env/
+venv/
+_.egg-info/
+dist/
+build/
+
+# IDE
+
+.vscode/
+.idea/
+_.swp
+_.swo
+\*~
+
+# OS
+
+.DS_Store
+Thumbs.db
+
+# Environment
+
+.env.local
+.env.development
+
+# Generated NFTs (too large)
+
+generated_nfts/images/_
+generated_nfts/metadata/_
+!generated_nfts/images/.gitkeep
+!generated_nfts/metadata/.gitkeep
+
+# Git
+
+.git/
+.gitignore
+
+# Docs
+
+\*.md
+!README.md
+
+# Test files
+
+test\__.py
+_\_test.py
+tests/

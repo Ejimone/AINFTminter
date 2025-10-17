@@ -1,0 +1,31 @@
+runtime: python313
+
+# Google Cloud Run configuration
+env: standard
+
+# Instance class
+instance_class: F2
+
+# Automatic scaling
+automatic_scaling:
+  min_instances: 0
+  max_instances: 10
+  target_cpu_utilization: 0.65
+
+# Environment variables (secrets should be in Secret Manager)
+env_variables:
+  PYTHON_VERSION: "3.13"
+
+# Health check
+liveness_check:
+  path: "/health"
+  check_interval_sec: 30
+  timeout_sec: 4
+  failure_threshold: 2
+
+readiness_check:
+  path: "/health"
+  check_interval_sec: 5
+  timeout_sec: 4
+  failure_threshold: 2
+  app_start_timeout_sec: 300

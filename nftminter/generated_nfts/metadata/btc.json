@@ -1,0 +1,16 @@
+{
+  "name": "AI Generated NFT - btc",
+  "description": "AI-generated artwork created from prompt: 'Bitcoin'",
+  "image": "generated_nfts/images/btc.png",
+  "prompt": "Bitcoin",
+  "attributes": [
+    {
+      "trait_type": "Generation Method",
+      "value": "Gemini 2.5 Flash Image"
+    },
+    {
+      "trait_type": "Created",
+      "value": "2025-10-17T13:48:14.260420"
+    }
+  ]
+}
