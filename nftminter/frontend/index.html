@@ -18,24 +18,16 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
     <div class="app-container">
       <!-- Header -->
       <header class="header">
         <div class="logo">
-          <svg
-            width="40"
-            height="40"
-            viewBox="0 0 40 40"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect width="40" height="40" rx="8" fill="#6366F1" />
-            <path d="M12 20L18 14L24 20L18 26L12 20Z" fill="white" />
-            <path d="M20 18L26 12L32 18L26 24L20 18Z" fill="#A5B4FC" />
-          </svg>
-          <h1>AI NFT Minter</h1>
+          <h1>NFT MINTER</h1>
         </div>
-        <p class="tagline">Generate unique NFTs powered by AI</p>
+        <p class="tagline">AI-Powered NFT Generation Platform</p>
       </header>
 
       <!-- Main Content -->
@@ -47,7 +39,6 @@
             data-tab="single"
             onclick="switchTab('single')"
           >
-            <span class="tab-icon">✨</span>
             Single NFT
           </button>
           <button
@@ -55,7 +46,6 @@
             data-tab="batch"
             onclick="switchTab('batch')"
           >
-            <span class="tab-icon">🎨</span>
             Batch Generate
           </button>
         </div>
@@ -69,7 +59,6 @@
                 id="connectWallet"
                 onclick="connectWallet()"
               >
-                <span class="btn-icon">🦊</span>
                 Connect MetaMask
               </button>
               <div class="wallet-info" id="walletInfo" style="display: none">
@@ -92,7 +81,7 @@
 
         <!-- Single NFT Form -->
         <div id="single-tab" class="tab-content active">
-          <div class="form-card">
+          <div class="form-card relative">
             <h2 class="form-title">Create Your NFT</h2>
             <p class="form-description">
               Generate a unique AI-powered NFT with custom metadata and mint it
@@ -152,15 +141,30 @@
                   id="generateOnlyBtn"
                   onclick="generateOnly()"
                 >
-                  <span class="btn-icon">🎨</span>
                   Generate Only
                 </button>
                 <button type="submit" class="btn-primary" id="generateBtn">
-                  <span class="btn-icon">⚡</span>
                   Generate & Mint NFT
                 </button>
               </div>
             </form>
+
+            <!-- Disabled Overlay (shown when wallet not connected) -->
+            <div
+              class="form-disabled-overlay"
+              id="singleFormOverlay"
+              style="display: none"
+            >
+              <div class="form-disabled-message">
+                <h3>Connect Your Wallet</h3>
+                <p>
+                  Please connect your MetaMask wallet to start generating NFTs
+                </p>
+                <button class="btn-wallet" onclick="connectWallet()">
+                  Connect MetaMask
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- Result Display -->
@@ -177,7 +181,7 @@
 
         <!-- Batch Generate Form -->
         <div id="batch-tab" class="tab-content">
-          <div class="form-card">
+          <div class="form-card relative">
             <h2 class="form-title">Batch Generate Images</h2>
             <p class="form-description">
               Generate multiple images at once from different prompts
@@ -202,10 +206,26 @@
               </div>
 
               <button type="submit" class="btn-primary" id="batchBtn">
-                <span class="btn-icon">🚀</span>
                 Generate Batch
               </button>
             </form>
+
+            <!-- Disabled Overlay (shown when wallet not connected) -->
+            <div
+              class="form-disabled-overlay"
+              id="batchFormOverlay"
+              style="display: none"
+            >
+              <div class="form-disabled-message">
+                <h3>Connect Your Wallet</h3>
+                <p>
+                  Please connect your MetaMask wallet to start generating images
+                </p>
+                <button class="btn-wallet" onclick="connectWallet()">
+                  Connect MetaMask
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- Batch Results -->
@@ -236,9 +256,12 @@
       <!-- Footer -->
       <footer class="footer">
         <div class="footer-content">
-          <p>Powered by Google Gemini AI, Pinata IPFS & Ethereum</p>
+          <p>Built By Evidence Ejimone</p>
           <div class="footer-links">
-            <a href="https://github.com" target="_blank" class="footer-link"
+            <a
+              href="https://github.com/Ejimone"
+              target="_blank"
+              class="footer-link"
               >GitHub</a
             >
             <span class="separator">•</span>
