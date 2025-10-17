@@ -104,6 +104,9 @@ async function connectWallet() {
       "walletBalance"
     ).textContent = `${ethBalance.toFixed(4)} ETH`;
 
+    // Update form button states
+    updateFormButtonStates();
+
     // Listen for account changes
     window.ethereum.on("accountsChanged", (accounts) => {
       if (accounts.length === 0) {
@@ -112,6 +115,7 @@ async function connectWallet() {
         userAccount = accounts[0];
         document.getElementById("walletAddress").textContent =
           userAccount.slice(0, 6) + "..." + userAccount.slice(-4);
+        updateFormButtonStates();
       }
     });
 
@@ -145,6 +149,7 @@ async function checkWalletConnection() {
       await connectWallet();
     }
   }
+  updateFormButtonStates();
 }
 
 // Tab Switching
@@ -249,6 +254,26 @@ document
   .addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    // Check wallet connection first
+    if (!userAccount) {
+      showResult(
+        "error",
+        "🦊 Wallet Connection Required",
+        `
+            <div class="error-alert">
+                <strong>Please connect your MetaMask wallet first!</strong><br>
+                You need to connect your wallet before generating NFTs.
+                <br><br>
+                <button class="btn-wallet" onclick="connectWallet()" style="margin-top: 0.5rem;">
+                    <span class="btn-icon">🦊</span>
+                    Connect MetaMask
+                </button>
+            </div>
+        `
+      );
+      return;
+    }
+
     const prompt = document.getElementById("prompt").value.trim();
     const name = document.getElementById("name").value.trim();
     const description = document.getElementById("description").value.trim();
@@ -347,6 +372,26 @@ document
 // Batch Form Handler
 document.getElementById("batchForm").addEventListener("submit", async (e) => {
   e.preventDefault();
+
+  // Check wallet connection first
+  if (!userAccount) {
+    showResult(
+      "error",
+      "🦊 Wallet Connection Required",
+      `
+            <div class="error-alert">
+                <strong>Please connect your MetaMask wallet first!</strong><br>
+                You need to connect your wallet before generating NFTs.
+                <br><br>
+                <button class="btn-wallet" onclick="connectWallet()" style="margin-top: 0.5rem;">
+                    <span class="btn-icon">🦊</span>
+                    Connect MetaMask
+                </button>
+            </div>
+        `
+    );
+    return;
+  }
 
   const promptsText = document.getElementById("prompts").value.trim();
   const prompts = promptsText.split("\n").filter((p) => p.trim().length > 0);
@@ -499,6 +544,33 @@ document.getElementById("batchForm").addEventListener("submit", async (e) => {
   }
 });
 
+// Update form button states based on wallet connection
+function updateFormButtonStates() {
+  const generateBtn = document.getElementById("generateBtn");
+  const generateOnlyBtn = document.getElementById("generateOnlyBtn");
+  const batchBtn = document.getElementById("batchBtn");
+  
+  if (!userAccount) {
+    // Show wallet requirement in button text
+    generateBtn.innerHTML = '<span class="btn-icon">🦊</span>Connect Wallet to Generate & Mint';
+    generateOnlyBtn.innerHTML = '<span class="btn-icon">🦊</span>Connect Wallet to Generate';
+    batchBtn.innerHTML = '<span class="btn-icon">🦊</span>Connect Wallet for Batch';
+    
+    generateBtn.style.opacity = '0.7';
+    generateOnlyBtn.style.opacity = '0.7';
+    batchBtn.style.opacity = '0.7';
+  } else {
+    // Restore original button text
+    generateBtn.innerHTML = '<span class="btn-icon">⚡</span>Generate & Mint NFT';
+    generateOnlyBtn.innerHTML = '<span class="btn-icon">🎨</span>Generate Only';
+    batchBtn.innerHTML = '<span class="btn-icon">🚀</span>Generate Batch';
+    
+    generateBtn.style.opacity = '1';
+    generateOnlyBtn.style.opacity = '1';
+    batchBtn.style.opacity = '1';
+  }
+}
+
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
   console.log("AI NFT Minter initialized");
@@ -510,6 +582,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Generate Only (no minting)
 async function generateOnly() {
+  // Check wallet connection first
+  if (!userAccount) {
+    showResult(
+      "error",
+      "🦊 Wallet Connection Required",
+      `
+            <div class="error-alert">
+                <strong>Please connect your MetaMask wallet first!</strong><br>
+                You need to connect your wallet before generating NFTs.
+                <br><br>
+                <button class="btn-wallet" onclick="connectWallet()" style="margin-top: 0.5rem;">
+                    <span class="btn-icon">🦊</span>
+                    Connect MetaMask
+                </button>
+            </div>
+        `
+    );
+    return;
+  }
+
   const prompt = document.getElementById("prompt").value.trim();
   const name = document.getElementById("name").value.trim();
   const description = document.getElementById("description").value.trim();
