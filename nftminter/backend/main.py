@@ -40,6 +40,8 @@ class GenerateNFTResponse(BaseModel):
     metadata: Optional[dict] = None
     prompt: str
     filename: Optional[str] = None
+    image_ipfs_uri: Optional[str] = None
+    metadata_ipfs_uri: Optional[str] = None
     error: Optional[str] = None
 
 
@@ -152,10 +154,10 @@ async def health_check():
 @app.post("/api/v1/generate-nft", response_model=GenerateNFTResponse)
 async def generate_nft(request: GenerateNFTRequest):
     """
-    Generate a single NFT from a text prompt.
+    Generate a single NFT from a text prompt and upload to IPFS.
     
     This endpoint uses Google's Imagen model to create unique AI-generated artwork
-    that can be minted as an NFT on the blockchain.
+    and uploads both image and metadata to IPFS for decentralized storage.
     """
     if not nft_generator:
         raise HTTPException(
@@ -163,34 +165,60 @@ async def generate_nft(request: GenerateNFTRequest):
             detail="NFT Generator not initialized. Please configure GOOGLE_API_KEY."
         )
     
+    if not ipfs_uploader:
+        raise HTTPException(
+            status_code=503,
+            detail="IPFS Uploader not initialized. Please configure PINATA_JWT."
+        )
+    
     try:
-        # Generate the NFT
+        print(f"\n🎨 Generating NFT from prompt: {request.prompt}")
+        
+        # Step 1: Generate the NFT image
         result = nft_generator.generate_image(
             prompt=request.prompt,
             output_filename=request.name.replace(" ", "_").lower() if request.name else None
         )
         
-        if result["success"]:
-            # If custom description provided, update metadata
-            if request.description:
-                result["metadata"]["description"] = request.description
-            
-            if request.name:
-                result["metadata"]["name"] = request.name
-            
-            return GenerateNFTResponse(
-                success=True,
-                message="NFT generated successfully",
-                image_path=result["image_path"],
-                metadata_path=result["metadata_path"],
-                metadata=result["metadata"],
-                prompt=result["prompt"],
-                filename=result["filename"]
-            )
-        else:
+        if not result["success"]:
             raise HTTPException(status_code=500, detail=result.get("error", "Generation failed"))
+        
+        # Step 2: Update metadata with custom name/description
+        metadata = result["metadata"]
+        if request.name:
+            metadata["name"] = request.name
+        if request.description:
+            metadata["description"] = request.description
+        
+        print(f"✅ Image generated: {result['image_path']}")
+        
+        # Step 3: Upload to IPFS
+        print("📤 Uploading to IPFS...")
+        ipfs_result = ipfs_uploader.upload_nft_complete(
+            image_path=result["image_path"],
+            metadata=metadata
+        )
+        
+        print(f"✅ Uploaded to IPFS:")
+        print(f"   Image: {ipfs_result['image_ipfs_uri']}")
+        print(f"   Metadata: {ipfs_result['metadata_ipfs_uri']}")
+        
+        return GenerateNFTResponse(
+            success=True,
+            message="NFT generated and uploaded to IPFS successfully",
+            image_path=result["image_path"],
+            metadata_path=result["metadata_path"],
+            metadata=metadata,
+            prompt=result["prompt"],
+            filename=result["filename"],
+            image_ipfs_uri=ipfs_result["image_ipfs_uri"],
+            metadata_ipfs_uri=ipfs_result["metadata_ipfs_uri"]
+        )
     
+    except HTTPException:
+        raise
     except Exception as e:
+        print(f"❌ Error generating NFT: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error generating NFT: {str(e)}")
 
 
