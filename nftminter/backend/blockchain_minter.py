@@ -469,6 +469,7 @@ class BlockchainMinter:
                     "recipient": recipient_address,
                     "token_uri": token_uri,
                     "gas_used": tx_receipt.gasUsed,
+                    "contract_address": self.contract_address,
                     "network": "sepolia"
                 }
             else:

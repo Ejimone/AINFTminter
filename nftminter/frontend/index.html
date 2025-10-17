@@ -1,566 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI NFT Minter - Create Your NFT</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-      }
-
-      .container {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        max-width: 600px;
-        width: 100%;
-        padding: 40px;
-      }
-
-      h1 {
-        color: #667eea;
-        text-align: center;
-        margin-bottom: 10px;
-        font-size: 2.5em;
-      }
-
-      .subtitle {
-        text-align: center;
-        color: #666;
-        margin-bottom: 30px;
-      }
-
-      .form-group {
-        margin-bottom: 20px;
-      }
-
-      label {
-        display: block;
-        margin-bottom: 8px;
-        color: #333;
-        font-weight: 600;
-      }
-
-      input,
-      textarea {
-        width: 100%;
-        padding: 12px;
-        border: 2px solid #e0e0e0;
-        border-radius: 10px;
-        font-size: 16px;
-        transition: border-color 0.3s;
-      }
-
-      input:focus,
-      textarea:focus {
-        outline: none;
-        border-color: #667eea;
-      }
-
-      textarea {
-        resize: vertical;
-        min-height: 100px;
-      }
-
-      .btn {
-        width: 100%;
-        padding: 15px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-size: 18px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
-      }
-
-      .btn:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-      }
-
-      .btn:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
-
-      .loading {
-        display: none;
-        text-align: center;
-        margin: 20px 0;
-      }
-
-      .spinner {
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #667eea;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        animation: spin 1s linear infinite;
-        margin: 0 auto 15px;
-      }
-
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-
-      .result {
-        display: none;
-        margin-top: 30px;
-        padding: 20px;
-        background: #f0f9ff;
-        border-radius: 10px;
-        border-left: 4px solid #667eea;
-      }
-
-      .result.success {
-        background: #f0fdf4;
-        border-left-color: #22c55e;
-      }
-
-      .result.error {
-        background: #fef2f2;
-        border-left-color: #ef4444;
-      }
-
-      .result h3 {
-        margin-bottom: 10px;
-        color: #333;
-      }
-
-      .result p {
-        margin: 5px 0;
-        color: #666;
-      }
-
-      .result a {
-        color: #667eea;
-        text-decoration: none;
-        font-weight: 600;
-      }
-
-      .result a:hover {
-        text-decoration: underline;
-      }
-
-        .nft-preview {
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .nft-preview h4 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .nft-preview img {
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            display: none;
-            margin-top: 10px;
-        }      .status-steps {
-        margin: 20px 0;
-        display: none;
-      }
-
-      .step {
-        padding: 10px;
-        margin: 5px 0;
-        background: #f3f4f6;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-      }
-
-      .step.active {
-        background: #dbeafe;
-      }
-
-      .step.complete {
-        background: #d1fae5;
-      }
-
-      .step-icon {
-        width: 24px;
-        height: 24px;
-        margin-right: 10px;
-      }
-
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .wallet-section {
-            margin-bottom: 30px;
-            padding: 20px;
-            background: #f0f9ff;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .wallet-info {
-            margin-top: 15px;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-        }
-
-        .wallet-info p {
-            margin: 5px 0;
-            color: #333;
-        }
-
-        .wallet-info span {
-            color: #667eea;
-            font-weight: 600;
-        }
-
-        #mintForm {
-            display: none;
-        }
-
-        #mintForm.enabled {
-            display: block;
-        }
-
-        .api-config {      .api-config input {
-        margin-top: 8px;
-      }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI NFT Minter - Create Unique NFTs with AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@radix-ui/themes@3.0.0/dist/radix-ui-themes.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@radix-ui/themes@3.0.0/styles.css">
+    <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <div class="container">
-      <h1>🎨 AI NFT Minter</h1>
-      <p class="subtitle">Create unique NFTs powered by AI and blockchain</p>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="40" height="40" rx="8" fill="#6366F1"/>
+                    <path d="M12 20L18 14L24 20L18 26L12 20Z" fill="white"/>
+                    <path d="M20 18L26 12L32 18L26 24L20 18Z" fill="#A5B4FC"/>
+                </svg>
+                <h1>AI NFT Minter</h1>
+            </div>
+            <p class="tagline">Generate unique NFTs powered by AI</p>
+        </header>
 
-      <!-- MetaMask Connection -->
-      <div class="wallet-section" id="walletSection">
-        <button class="btn" id="connectWallet" onclick="connectWallet()">
-          🦊 Connect MetaMask
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Tab Navigation -->
+            <div class="tabs">
+                <button class="tab-button active" data-tab="single" onclick="switchTab('single')">
+                    <span class="tab-icon">✨</span>
+                    Single NFT
+                </button>
+                <button class="tab-button" data-tab="batch" onclick="switchTab('batch')">
+                    <span class="tab-icon">🎨</span>
+                    Batch Generate
         </button>
-        <div class="wallet-info" id="walletInfo" style="display: none">
-          <p><strong>Connected:</strong> <span id="walletAddress"></span></p>
-          <p><strong>Network:</strong> <span id="networkName"></span></p>
-        </div>
-      </div>
-      <!-- API Configuration -->
-      <div class="api-config">
-        <label for="apiUrl">Backend API URL:</label>
-        <input
-          type="text"
-          id="apiUrl"
-          value="https://ai-nft-minter-580832663068.us-central1.run.app"
-          placeholder="https://your-backend-url.run.app"
-        />
       </div>
 
-      <!-- Minting Form -->
-      <form id="mintForm">
+            <!-- Wallet Connection -->
+            <div class="wallet-section" id="walletSection">
+                <div class="wallet-card">
+                    <div class="wallet-status" id="walletStatus">
+                        <button class="btn-wallet" id="connectWallet" onclick="connectWallet()">
+                            <span class="btn-icon">🦊</span>
+                            Connect MetaMask
+                        </button>
+                        <div class="wallet-info" id="walletInfo" style="display: none">
+                            <div class="wallet-item">
+                                <span class="wallet-label">Address:</span>
+                                <span class="wallet-value" id="walletAddress"></span>
+                            </div>
+                            <div class="wallet-item">
+                                <span class="wallet-label">Network:</span>
+                                <span class="wallet-value" id="networkName"></span>
+                            </div>
+                            <div class="wallet-item">
+                                <span class="wallet-label">Balance:</span>
+                                <span class="wallet-value" id="walletBalance"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Single NFT Form -->
+            <div id="single-tab" class="tab-content active">
+                <div class="form-card">
+                    <h2 class="form-title">Create Your NFT</h2>
+                    <p class="form-description">Generate a unique AI-powered NFT with custom metadata and mint it on the blockchain</p>
+                    
+                    <form id="singleNftForm">
         <div class="form-group">
-          <label for="prompt">🖼️ Describe Your NFT:</label>
+                            <label for="prompt" class="form-label">
+                                <span>Image Prompt</span>
+                                <span class="required">*</span>
+                            </label>
           <textarea
             id="prompt"
-            placeholder="A dancing monkey making money with a giraffe..."
+                                class="form-input" 
+                                rows="4" 
+                                placeholder="A futuristic cityscape at sunset with flying cars..."
             required
           ></textarea>
+                            <span class="form-hint">Describe the image you want to generate</span>
+        </div>
+
+                        <div class="form-row">
+        <div class="form-group">
+                                <label for="name" class="form-label">
+                                    <span>NFT Name</span>
+                                    <span class="required">*</span>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="name" 
+                                    class="form-input" 
+                                    placeholder="My Awesome NFT"
+                                    required
+                                />
         </div>
 
         <div class="form-group">
-          <label for="name">📝 NFT Name:</label>
-          <input type="text" id="name" placeholder="My Awesome NFT" required />
-        </div>
-
-        <div class="form-group">
-          <label for="description">💬 Description (optional):</label>
+                                <label for="description" class="form-label">
+                                    <span>Description</span>
+                                </label>
           <input
             type="text"
             id="description"
+                                    class="form-input" 
             placeholder="A unique AI-generated masterpiece"
           />
+                            </div>
         </div>
 
-        <button type="submit" class="btn" id="mintBtn">
-          ⚡ Generate & Mint NFT
-        </button>
+                        <div class="form-row">
+                            <button type="button" class="btn-secondary" id="generateOnlyBtn" onclick="generateOnly()">
+                                <span class="btn-icon">🎨</span>
+                                Generate Only
+                            </button>
+                            <button type="submit" class="btn-primary" id="generateBtn">
+                                <span class="btn-icon">⚡</span>
+                                Generate & Mint NFT
+                            </button>
+                        </div>
       </form>
+                </div>
 
-      <!-- Loading State -->
-      <div class="loading" id="loading">
-        <div class="spinner"></div>
-        <p id="loadingText">Generating your NFT...</p>
+                <!-- Result Display -->
+                <div id="singleResult" class="result-card" style="display: none;">
+                    <div class="result-header">
+                        <h3 class="result-title" id="resultTitle"></h3>
+                        <button class="btn-close" onclick="closeResult('single')">✕</button>
+                    </div>
+                    <div id="resultContent" class="result-content"></div>
+                </div>
+            </div>
+
+            <!-- Batch Generate Form -->
+            <div id="batch-tab" class="tab-content">
+                <div class="form-card">
+                    <h2 class="form-title">Batch Generate Images</h2>
+                    <p class="form-description">Generate multiple images at once from different prompts</p>
+                    
+                    <form id="batchForm">
+                        <div class="form-group">
+                            <label for="prompts" class="form-label">
+                                <span>Image Prompts</span>
+                                <span class="required">*</span>
+                            </label>
+                            <textarea 
+                                id="prompts" 
+                                class="form-input" 
+                                rows="8" 
+                                placeholder="Enter one prompt per line:&#10;A serene mountain landscape&#10;A cyberpunk city at night&#10;An abstract geometric pattern"
+                                required
+                            ></textarea>
+                            <span class="form-hint">Enter one prompt per line (up to 10 prompts)</span>
       </div>
 
-      <!-- Status Steps -->
-      <div class="status-steps" id="statusSteps">
-        <div class="step" id="step1">
-          <span class="step-icon">⏳</span>
-          <span>Generating AI image...</span>
+                        <button type="submit" class="btn-primary" id="batchBtn">
+                            <span class="btn-icon">🚀</span>
+                            Generate Batch
+                        </button>
+                    </form>
         </div>
-        <div class="step" id="step2">
-          <span class="step-icon">⏳</span>
-          <span>Uploading to IPFS...</span>
+
+                <!-- Batch Results -->
+                <div id="batchResult" class="result-card" style="display: none;">
+                    <div class="result-header">
+                        <h3 class="result-title" id="batchResultTitle"></h3>
+                        <button class="btn-close" onclick="closeResult('batch')">✕</button>
         </div>
-        <div class="step" id="step3">
-          <span class="step-icon">⏳</span>
-          <span>Minting on blockchain...</span>
+                    <div id="batchResultContent" class="result-content"></div>
         </div>
       </div>
 
-      <!-- Result Display -->
-      <div class="result" id="result">
-        <h3 id="resultTitle"></h3>
-        <div id="resultContent"></div>
+            <!-- Loading Overlay -->
+            <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+                <div class="loading-card">
+                    <div class="spinner"></div>
+                    <h3 class="loading-title" id="loadingTitle">Generating...</h3>
+                    <p class="loading-text" id="loadingText">This may take 10-30 seconds</p>
+                    <div class="loading-steps" id="loadingSteps"></div>
+                </div>
       </div>
+        </main>
 
-      <div class="footer">
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
         <p>Powered by Google Gemini AI, Pinata IPFS & Ethereum</p>
+                <div class="footer-links">
+                    <a href="https://github.com" target="_blank" class="footer-link">GitHub</a>
+                    <span class="separator">•</span>
+                    <a href="#" class="footer-link">Documentation</a>
+                </div>
       </div>
+        </footer>
     </div>
 
-    <script>
-      let userAddress = null;
-      let web3 = null;
-
-      // Connect MetaMask
-      async function connectWallet() {
-        if (typeof window.ethereum === "undefined") {
-          alert(
-            "MetaMask is not installed! Please install MetaMask to use this app.\n\nVisit: https://metamask.io/"
-          );
-          return;
-        }
-
-        try {
-          // Request account access
-          const accounts = await window.ethereum.request({
-            method: "eth_requestAccounts",
-          });
-
-          userAddress = accounts[0];
-
-          // Get network
-          const chainId = await window.ethereum.request({
-            method: "eth_chainId",
-          });
-
-          const networkNames = {
-            "0x1": "Ethereum Mainnet",
-            "0xaa36a7": "Sepolia Testnet",
-            "0x5": "Goerli Testnet",
-            "0x539": "Ganache Local",
-          };
-
-          const networkName = networkNames[chainId] || `Unknown (${chainId})`;
-
-          // Check if on Sepolia
-          if (chainId !== "0xaa36a7") {
-            const switchNetwork = confirm(
-              `You're on ${networkName}.\n\n` +
-                `This app works on Sepolia Testnet.\n\n` +
-                `Switch to Sepolia now?`
-            );
-
-            if (switchNetwork) {
-              try {
-                await window.ethereum.request({
-                  method: "wallet_switchEthereumChain",
-                  params: [{ chainId: "0xaa36a7" }],
-                });
-              } catch (switchError) {
-                // Network not added, try to add it
-                if (switchError.code === 4902) {
-                  await window.ethereum.request({
-                    method: "wallet_addEthereumChain",
-                    params: [
-                      {
-                        chainId: "0xaa36a7",
-                        chainName: "Sepolia Testnet",
-                        nativeCurrency: {
-                          name: "Sepolia ETH",
-                          symbol: "ETH",
-                          decimals: 18,
-                        },
-                        rpcUrls: ["https://sepolia.infura.io/v3/"],
-                        blockExplorerUrls: ["https://sepolia.etherscan.io/"],
-                      },
-                    ],
-                  });
-                }
-              }
-            }
-          }
-
-          // Update UI
-          document.getElementById("connectWallet").style.display = "none";
-          document.getElementById("walletInfo").style.display = "block";
-          document.getElementById("walletAddress").textContent =
-            userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
-          document.getElementById("networkName").textContent = networkName;
-          document.getElementById("mintForm").classList.add("enabled");
-
-          // Listen for account changes
-          window.ethereum.on("accountsChanged", (accounts) => {
-            if (accounts.length === 0) {
-              location.reload();
-            } else {
-              userAddress = accounts[0];
-              document.getElementById("walletAddress").textContent =
-                userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
-            }
-          });
-
-          // Listen for network changes
-          window.ethereum.on("chainChanged", () => {
-            location.reload();
-          });
-        } catch (error) {
-          console.error("Error connecting wallet:", error);
-          alert("Failed to connect wallet: " + error.message);
-        }
-      }
-
-      // Check if already connected
-      async function checkConnection() {
-        if (typeof window.ethereum !== "undefined") {
-          const accounts = await window.ethereum.request({
-            method: "eth_accounts",
-          });
-
-          if (accounts.length > 0) {
-            // Auto-connect
-            await connectWallet();
-          }
-        }
-      }
-
-      // Call on page load
-      window.addEventListener("load", checkConnection);
-
-      const form = document.getElementById("mintForm");
-      const loading = document.getElementById("loading");
-      const result = document.getElementById("result");
-      const mintBtn = document.getElementById("mintBtn");
-      const statusSteps = document.getElementById("statusSteps");
-
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        // Get form values
-        const apiUrl = document.getElementById("apiUrl").value.trim();
-        const prompt = document.getElementById("prompt").value;
-        const name = document.getElementById("name").value;
-        const description = document.getElementById("description").value;
-
-        // Show loading state
-        loading.style.display = "block";
-        result.style.display = "none";
-        statusSteps.style.display = "block";
-        mintBtn.disabled = true;
-
-        // Reset steps
-        document.querySelectorAll(".step").forEach((step) => {
-          step.classList.remove("active", "complete");
-        });
-
-        try {
-          // Start minting
-          document.getElementById("step1").classList.add("active");
-          document.getElementById("loadingText").textContent =
-            "Generating AI image (10-30 seconds)...";
-
-          const response = await fetch(`${apiUrl}/api/v1/mint-nft`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              prompt,
-              name,
-              description: description || undefined,
-              network: "sepolia",
-            }),
-          });
-
-          if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || "Minting failed");
-          }
-
-          const data = await response.json();
-
-          // Mark all steps complete
-          document.querySelectorAll(".step").forEach((step) => {
-            step.classList.remove("active");
-            step.classList.add("complete");
-            step.querySelector(".step-icon").textContent = "✅";
-          });
-
-          // Show success result
-          loading.style.display = "none";
-          result.className = "result success";
-          result.style.display = "block";
-          document.getElementById("resultTitle").textContent =
-            "🎉 NFT Minted Successfully!";
-
-          document.getElementById("resultContent").innerHTML = `
-                    <p><strong>Token ID:</strong> ${data.token_id}</p>
-                    <p><strong>Transaction:</strong> <a href="${
-                      data.explorer_url
-                    }" target="_blank">View on Etherscan →</a></p>
-                    <p><strong>Image IPFS:</strong> <a href="https://gateway.pinata.cloud/ipfs/${data.image_ipfs_uri.replace(
-                      "ipfs://",
-                      ""
-                    )}" target="_blank">View Image →</a></p>
-                    <p><strong>Metadata IPFS:</strong> <a href="https://gateway.pinata.cloud/ipfs/${data.metadata_ipfs_uri.replace(
-                      "ipfs://",
-                      ""
-                    )}" target="_blank">View Metadata →</a></p>
-                    <div class="nft-preview">
-                        <img src="https://gateway.pinata.cloud/ipfs/${data.image_ipfs_uri.replace(
-                          "ipfs://",
-                          ""
-                        )}" alt="${name}">
-                    </div>
-                `;
-        } catch (error) {
-          // Show error
-          loading.style.display = "none";
-          statusSteps.style.display = "none";
-          result.className = "result error";
-          result.style.display = "block";
-          document.getElementById("resultTitle").textContent =
-            "❌ Minting Failed";
-          document.getElementById("resultContent").innerHTML = `
-                    <p><strong>Error:</strong> ${error.message}</p>
-                    <p>Please check your backend API URL and try again.</p>
-                `;
-        } finally {
-          mintBtn.disabled = false;
-        }
-      });
-    </script>
+    <script src="app.js"></script>
   </body>
 </html>

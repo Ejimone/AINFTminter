@@ -330,16 +330,20 @@ async def mint_nft_complete(request: MintNFTRequest):
         
         # Set recipient address
         recipient = request.recipient_address
-        if not recipient:
-            # Use minter's address as recipient if not specified
-            from brownie import accounts
-            recipient = accounts.add(os.getenv("PRIVATE_KEY")).address
+        if not recipient or recipient == "string" or not recipient.startswith('0x') or len(recipient) != 42:
+            # Use minter's address as recipient if not specified or invalid
+            from eth_account import Account
+            private_key = os.getenv("PRIVATE_KEY")
+            if not private_key.startswith('0x'):
+                private_key = '0x' + private_key
+            account = Account.from_key(private_key)
+            recipient = account.address
+            print(f"Using minter address as recipient: {recipient}")
+        else:
+            print(f"Using provided recipient address: {recipient}")
         
         # Create blockchain minter for this request (supports different networks)
-        minter = BlockchainMinter(
-            contract_address=contract_address,
-            network=request.network
-        )
+        minter = BlockchainMinter()
         
         mint_result = minter.mint_nft(
             recipient_address=recipient,

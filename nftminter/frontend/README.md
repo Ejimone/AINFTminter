@@ -1,127 +1,234 @@
 # AI NFT Minter - Frontend
 
-Minimalistic frontend for the AI NFT Minter application.
+A beautiful, modern frontend for generating AI-powered NFTs. Built with vanilla HTML, CSS, and JavaScript with Radix UI design principles and aesthetic opaque colors.
 
-## Features
+## 🎨 Features
 
-- ✨ Clean, modern UI
-- 🎨 AI-powered NFT generation
-- 📤 IPFS upload visualization
-- 🔗 Blockchain minting with live status
-- 📱 Fully responsive design
-- 🖼️ NFT preview after minting
+- **Single NFT Generation**: Generate unique NFTs with custom names and descriptions
+- **Batch Generation**: Create multiple images at once from different prompts
+- **Modern Design**: Dark theme with opaque colors (no gradients) for a professional look
+- **Responsive**: Works perfectly on desktop, tablet, and mobile devices
+- **Real-time Feedback**: Loading states and progress indicators
+- **IPFS Integration**: Direct links to view images and metadata on IPFS
 
-## Usage
+## 🚀 Quick Start
 
-### Option 1: Local Testing
+### Option 1: Open Directly in Browser
 
-Simply open `index.html` in your browser:
-
-```bash
-# macOS
-open frontend/index.html
-
-# Or use Python's built-in server
-cd frontend
-python3 -m http.server 8080
-# Then visit: http://localhost:8080
-```
-
-### Option 2: Deploy to GitHub Pages
-
-1. Create a new repository on GitHub
-2. Push your frontend code:
+Simply open `index.html` in your web browser:
 
 ```bash
-cd frontend
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/ai-nft-minter-frontend.git
-git push -u origin main
+# From the frontend directory
+open index.html
 ```
 
-3. Enable GitHub Pages:
+Or double-click the `index.html` file.
 
-   - Go to repository Settings → Pages
-   - Source: Deploy from branch `main`
-   - Folder: `/` (root)
-   - Save
+### Option 2: Use a Local Server (Recommended)
 
-4. Your frontend will be live at: `https://YOUR_USERNAME.github.io/ai-nft-minter-frontend/`
-
-### Option 3: Deploy to Vercel
+For the best experience, serve the files with a local HTTP server:
 
 ```bash
-# Install Vercel CLI
-npm install -g vercel
+# Using Python 3
+python3 -m http.server 8000
 
-# Deploy
-cd frontend
-vercel
+# Using Node.js (if you have http-server installed)
+npx http-server -p 8000
+
+# Using PHP
+php -S localhost:8000
 ```
 
-### Option 4: Deploy to Netlify
+Then visit: `http://localhost:8000`
 
-1. Go to https://app.netlify.com/
-2. Drag and drop the `frontend` folder
-3. Done! Your site is live
+## 📝 Usage
 
-## Configuration
+### Generate Single NFT
 
-Update the **Backend API URL** in the UI to point to your deployed backend:
+1. Click on the **"Single NFT"** tab
+2. Enter a descriptive prompt for your image
+3. Provide a name for your NFT (required)
+4. Optionally add a description
+5. Click **"Generate NFT"**
+6. Wait 10-30 seconds for AI generation
+7. View your generated NFT with IPFS links
 
-- **Local**: `http://localhost:8000`
-- **Google Cloud Run**: `https://ai-nft-minter-backend-XXXXXXXX-uc.a.run.app`
+**Example Prompt:**
+```
+A futuristic cityscape at sunset with flying cars and neon lights
+```
 
-## Customization
+### Batch Generate Images
 
-Edit `index.html` to customize:
+1. Click on the **"Batch Generate"** tab
+2. Enter one prompt per line (up to 10 prompts)
+3. Click **"Generate Batch"**
+4. Wait for all images to be generated
+5. View results in a beautiful grid layout
 
-- Colors (line 18-19: gradient)
-- Fonts (line 12)
-- Form fields
-- Button text
-- Footer
+**Example Prompts:**
+```
+A serene mountain landscape with a lake
+A cyberpunk city at night
+An abstract geometric pattern
+A peaceful garden with cherry blossoms
+```
 
-## Screenshot
+## 🎨 Design Features
 
-The UI includes:
+- **Dark Theme**: Professional dark mode with carefully chosen colors
+- **Opaque Colors**: No gradients, just solid aesthetic colors
+- **Color Palette**:
+  - Primary: `#6366F1` (Indigo)
+  - Secondary: `#8B5CF6` (Purple)
+  - Accent: `#EC4899` (Pink)
+  - Success: `#10B981` (Green)
+  - Error: `#EF4444` (Red)
+- **Typography**: Inter font family for clean, modern text
+- **Animations**: Smooth transitions and loading states
+- **Shadows**: Subtle depth for card elements
 
-1. API URL configuration
-2. NFT prompt input (describe your image)
-3. NFT name and description
-4. Live minting progress with 3 steps:
-   - 🎨 AI image generation
-   - 📤 IPFS upload
-   - ⛓️ Blockchain minting
-5. Success display with:
-   - Token ID
-   - Etherscan link
-   - IPFS links
-   - NFT preview image
+## 🔧 Configuration
 
-## Browser Support
+The API endpoint is configured in `app.js`:
 
-- ✅ Chrome/Edge (recommended)
-- ✅ Firefox
-- ✅ Safari
-- ✅ Mobile browsers
+```javascript
+const API_BASE_URL = 'https://ai-nft-minter-580832663068.us-central1.run.app';
+```
 
-## Development
+To change the backend URL, edit this constant in the `app.js` file.
 
-No build step required! Pure HTML, CSS, and vanilla JavaScript.
+## 📁 File Structure
 
-To make changes:
+```
+frontend/
+├── index.html          # Main HTML structure
+├── styles.css          # All styling (opaque colors)
+├── app.js             # JavaScript functionality
+└── README.md          # This file
+```
 
-1. Edit `index.html`
-2. Refresh browser
-3. Done!
+## 🌐 API Endpoints
 
-## Next Steps
+### Generate Single NFT
+```bash
+POST /api/v1/generate-nft
+Content-Type: application/json
 
-1. Deploy backend to Google Cloud Run (see `backend/DEPLOYMENT.md`)
-2. Update API URL in frontend
-3. Deploy frontend to hosting service
-4. Share your NFT minter with the world! 🚀
+{
+  "prompt": "string",
+  "name": "string",
+  "description": "string" (optional)
+}
+```
+
+### Generate Batch
+```bash
+POST /api/v1/generate-batch
+Content-Type: application/json
+
+{
+  "prompts": ["string", "string", ...]
+}
+```
+
+## 🎯 Browser Support
+
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+- Opera 76+
+
+## 📱 Responsive Breakpoints
+
+- Mobile: < 768px
+- Tablet: 768px - 1024px
+- Desktop: > 1024px
+
+## 🎨 Customization
+
+### Change Colors
+
+Edit the CSS variables in `styles.css`:
+
+```css
+:root {
+    --primary: #6366F1;
+    --secondary: #8B5CF6;
+    --accent: #EC4899;
+    /* ... more colors */
+}
+```
+
+### Modify Animations
+
+All animations are defined in `styles.css` with the `@keyframes` rule:
+
+```css
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+```
+
+## 🔍 Testing
+
+To test the API endpoints manually:
+
+```bash
+# Test single NFT generation
+curl -X 'POST' \
+  'https://ai-nft-minter-580832663068.us-central1.run.app/api/v1/generate-nft' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "prompt": "a dancing robot",
+  "name": "Dancing Robot NFT",
+  "description": "An AI-generated dancing robot"
+}'
+
+# Test batch generation
+curl -X 'POST' \
+  'https://ai-nft-minter-580832663068.us-central1.run.app/api/v1/generate-batch' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "prompts": [
+    "a beautiful sunset",
+    "a mountain landscape",
+    "a cyberpunk city"
+  ]
+}'
+```
+
+## 🚨 Troubleshooting
+
+### Images Not Loading
+- Check that the backend API is running
+- Verify the IPFS gateway is accessible
+- Check browser console for errors
+
+### CORS Issues
+- Ensure the backend has CORS enabled
+- Try using a local server instead of opening HTML directly
+
+### Slow Generation
+- AI image generation takes 10-30 seconds
+- Batch generation takes proportionally longer
+- Check your internet connection
+
+## 📄 License
+
+Part of the AI NFT Minter project - An AI-powered NFT minting platform combining generative AI with blockchain technology.
+
+## 🤝 Contributing
+
+This is a portfolio project. Feel free to fork and customize for your own use!
+
+## 📬 Support
+
+For issues or questions about the backend API, refer to the main project documentation.
+
+---
+
+**Built with ❤️ using vanilla HTML, CSS, and JavaScript**
