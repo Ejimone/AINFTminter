@@ -1,5 +1,6 @@
 // Configuration
-const API_BASE_URL = "https://ai-nft-minter-580832663068.us-central1.run.app";
+const API_BASE_URL =
+  "https://ai-nft-minter-backend-4521498281.us-central1.run.app/";
 
 // State
 let currentTab = "single";
